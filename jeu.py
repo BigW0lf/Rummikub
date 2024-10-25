@@ -40,7 +40,6 @@ class Tuile:
 class Set:
     def __init__(self, tuiles : list):
         self.tuiles = tuiles
-        
     def ajout_tuile(self, tuile:Tuile):
         self.tuiles.append(tuile)
     
@@ -49,14 +48,15 @@ class Set:
             raise ValueError("la tuile n'est pas dans le set")       
         else:
             self.tuiles.remove(tuile)
+            
     def validate (self):
         colors = []
         nbs = []
         tuiles_array = np.array(self.tuiles)
         for i in range (len(self.tuiles)):
-            dup_tuiles = self.tuiles
-            dup_tuiles.pop(i)
-            for j in range (len(self.tuiles)):
+            dup_tuiles = self.tuiles.copy()
+            del dup_tuiles[i]
+            for j in range (len(dup_tuiles)):
                 if self.tuiles[i] == dup_tuiles[j]:
                     return False
                 else:
@@ -74,6 +74,7 @@ class Set:
         if Min == 0 or Max ==0 :
             return False
         if Min < Max :
+            print('suite')
             verif_suite = np.array(cst.nombres[Min:Max+1]) - np.array(nbs)
             check_suite = np.where(verif_suite != 0)
             if taille < 3 :      
@@ -91,9 +92,8 @@ class Set:
                 return val
                
         if Min == Max :
-            compte_colors = np.unique(colors,return_counts = True)
+            print('meme')
             
-            print(compte_colors)
             if 2 > taille > 4 :
                 return False
             
@@ -110,9 +110,12 @@ class Set:
                    val =  el.isJoker()
                 return val
                 
-            
 
-            
+    def point(self):
+        nbs = []
+        for t in self.tuiles:
+            nbs.append(t.nombre)
+        return np.sum(nbs)
         
     def __str__(self):
         if not self.tuiles:
@@ -126,7 +129,12 @@ class Pioche:
         for c in cst.true_colors.keys():
             for n in cst.nombres:
                 if not (n == 0 and c in [1,2]):
-                    self.pioche.append(Tuile(n,c))
+                    if Tuile(n,c).isJoker() :
+                        self.pioche.append(Tuile(n,c))
+                    else :
+                        self.pioche.append(Tuile(n,c))
+                        self.pioche.append(Tuile(n,c))
+ 
     def tirer(self):
         if not self.pioche:
             raise ValueError("La pioche est vide.")
@@ -142,21 +150,39 @@ class Pioche:
             return "\n".join(str(e) for e in self.pioche)
 
 class Table:
-    def __init__(self):
-        self.table = []
+    def __init__(self, list_set : list):
+        self.table = list_set
     
     def ajout_set (self, tuiles: Set):
         self.table.appends(tuiles)
     
-    def check_table(self, table):
+    def check_table(self):
+        res = []
         for s in self.table:
-            for t in self.table.Set:
-                check1 += len(t)
-        for s in table:
-            for t in table.Set:
-                check2 += len(t)
-        return check1-check2
+            res.append(s.validate)
+        
+        if np.unique(res).shape[0] == 0 :
+            return True
+        
+        else:
+            return False
+
+class Joueur:
+    def __init__(self, nom : str):
+        self.nom = nom
+        self.actif = False
+        self.debut = False
+        self.score = 0
+        self.main = []
     
+    def pose(self, sett : Set):
+        main - sett
+        score += point
+    
+    def pioche():
+        main + tuile from pioche
+        
+        
 
         
     
@@ -166,7 +192,7 @@ tuile4 = Tuile(0, 4)
 
 
 # Création et ajout de tuiles
-tuile1 = Tuile(12, 3)
+tuile1 = Tuile(12, 4)
 
 
 tuile2 = Tuile(12, 3)
@@ -179,4 +205,4 @@ pioche = Pioche()
 set1 = Set([tuile2,tuile3,tuile1])
 
 print(set1)
-print(set1.validate())
+print(set1.validate(),set1.point())
